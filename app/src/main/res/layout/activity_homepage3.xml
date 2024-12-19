@@ -19,17 +19,17 @@
         app:layout_constraintVertical_bias="0.442"
         app:srcCompat="@drawable/background" />
 
-    <ImageView
-        android:id="@+id/imageView8"
-        android:layout_width="310dp"
-        android:layout_height="244dp"
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottie_heart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="@+id/imageView7"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.427"
+        app:layout_constraintHorizontal_bias="0.515"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.469"
-        app:srcCompat="@drawable/heart_rate" />
+        app:layout_constraintTop_toBottomOf="@+id/checkingPulse2"
+        app:layout_constraintVertical_bias="0.062"
+        app:lottie_fileName="heart_beating.json" />
 
     <androidx.camera.view.PreviewView
         android:id="@+id/preview"
@@ -49,12 +49,11 @@
         android:id="@+id/lottieLoading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="210dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView8"
-        app:layout_constraintVertical_bias="1.0"
+        app:layout_constraintTop_toBottomOf="@+id/checkingPulse"
         app:lottie_fileName="loading.json" />
 
     <TextView
@@ -81,5 +80,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/checkingPulse" />
+
+    <ImageView
+        android:id="@+id/imageView17"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="190dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/lottie_heart"
+        app:srcCompat="@drawable/shadow" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -8,6 +8,7 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
+import com.airbnb.lottie.LottieAnimationView
 import com.xastia.test.R
 import com.xastia.test.databinding.ActivityHomepage3Binding
 
@@ -34,6 +35,13 @@ class Homepage3 : AppCompatActivity() {
                 startActivity(intent)
                 finish()
             }
+        }
+
+        binding.lottieHeart.apply {
+            setMinProgress(0.0f)
+            setMaxProgress(1.0f)
+            repeatCount = 20
+            playAnimation()
         }
     }
 
