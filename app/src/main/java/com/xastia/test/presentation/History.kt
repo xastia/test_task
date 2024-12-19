@@ -26,8 +26,6 @@ class History : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityHistoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val startList = emptyList<Result>()
-        //adapter = ResultAdapter(startList)
 
         val db = MainDb.getDb(this)
         val resultRepository = ResultRepositoryImpl(db)
@@ -35,22 +33,20 @@ class History : AppCompatActivity() {
         val showHistoryUseCase = ShowHistoryUseCase(resultRepository)
 
 
-        CoroutineScope(Dispatchers.IO).launch {
-            resultRepository.addResult(Result(null, 44, "test", "test"))
-        }
-
         showHistoryUseCase.execute().asLiveData().observe(this) { results ->
             resHistory = results
-//            adapter.updateData(resHistory)
             adapter = ResultAdapter(resHistory)
+            init()
 
             if (resHistory.isEmpty()) {
                 binding.delete.visibility = View.GONE
                 binding.noResults.visibility = View.VISIBLE
             } else if (resHistory.size <= 7) {
                 binding.delete.visibility = View.VISIBLE
+                binding.noResults.visibility = View.GONE
             } else {
                 binding.delete.visibility = View.GONE
+                binding.noResults.visibility = View.GONE
             }
         }
 
