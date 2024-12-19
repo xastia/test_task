@@ -20,6 +20,7 @@ class ResultActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityResultBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val bpm = intent.getIntExtra("BPM", 0)
         val db = MainDb.getDb(this)
         val resultRepository = ResultRepositoryImpl(db)
         val addResultUseCase = AddResultUseCase(resultRepository)
@@ -32,7 +33,7 @@ class ResultActivity : AppCompatActivity() {
 
         binding.date.text = time + "\n" + date
         CoroutineScope(Dispatchers.IO).launch {
-            addResultUseCase.execute(Result(null, 0, time, date))
+            addResultUseCase.execute(Result(null, bpm, time, date))
 
         }
 

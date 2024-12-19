@@ -92,4 +92,18 @@
         app:layout_constraintTop_toTopOf="@+id/lottie_heart"
         app:srcCompat="@drawable/shadow" />
 
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:text="64"
+        android:textColor="@color/white"
+        android:textSize="74sp"
+        app:fontFamily="@font/rubik_bold"
+        app:layout_constraintEnd_toEndOf="@+id/lottie_heart"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="@+id/lottie_heart"
+        app:layout_constraintTop_toTopOf="@+id/lottie_heart" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
