@@ -17,10 +17,11 @@
     <string name="checking_pulse2">Визначаємо ваш пульс. Утримуйте!</string>
     <string name="result">Результат</string>
     <string name="ready">Готово</string>
+    <string name="slow">Уповільнено</string>
+    <string name="normal">Звичайно</string>
+    <string name="fast">Прискорено</string>
 
-    <string name="reaбббdy">Готово</string>
-    <string name="дшлоready">Готово</string>
-    <string name="re9ady">Готово</string>
+
     <string name="rшeady">Готово</string>
     <string name="reрady">Готово</string>
 
