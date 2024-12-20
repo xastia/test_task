@@ -11,20 +11,44 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import com.xastia.test.R
+import com.xastia.test.data.repository.CameraRepositoryImpl
 import com.xastia.test.databinding.ActivityHomepage2Binding
+import com.xastia.test.domain.usecase.StartCameraUseCase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class Homepage2 : AppCompatActivity() {
-    private lateinit var cameraExecutor: ExecutorService
     private lateinit var binding: ActivityHomepage2Binding
+    private lateinit var cameraRepository: CameraRepositoryImpl
+    private lateinit var cameraExecutor: ExecutorService
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHomepage2Binding.inflate(layoutInflater)
         setContentView(binding.root)
-        startCamera()
 
         cameraExecutor = Executors.newSingleThreadExecutor()
+        cameraRepository = CameraRepositoryImpl(this, cameraExecutor)
+        val startCameraUseCase = StartCameraUseCase(cameraRepository)
+
+        CoroutineScope(Dispatchers.Default).launch {
+            startCameraUseCase.execute(binding.preview).collect { imageProxy ->
+                val brightness = cameraRepository.analyzeImage(imageProxy)
+                if (brightness < 20) {
+                    withContext(Dispatchers.Main) {
+                        val intent = Intent(this@Homepage2, Homepage3::class.java)
+                        startActivity(intent)
+                        finish()
+                    }
+                }
+                imageProxy.close()
+            }
+        }
+
 
         binding.imageButton.setOnClickListener {
             val intent = Intent(this, Homepage1::class.java)
@@ -37,62 +61,4 @@ class Homepage2 : AppCompatActivity() {
         super.onDestroy()
         cameraExecutor.shutdown()
     }
-
-    private fun startCamera() {
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
-        cameraProviderFuture.addListener({
-            val cameraProvider = cameraProviderFuture.get()
-            val preview = Preview.Builder().build()
-                .also {
-                    it.setSurfaceProvider(findViewById<PreviewView>(R.id.preview).surfaceProvider)
-                }
-
-            val imageAnalyzer = ImageAnalysis.Builder()
-                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                .build()
-                .also {
-                    it.setAnalyzer(ContextCompat.getMainExecutor(this)) { imageProxy ->
-                        processImage(imageProxy)
-                        imageProxy.close()
-                    }
-                }
-
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-
-            try {
-                cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(
-                    this,
-                    cameraSelector,
-                    preview,
-                    imageAnalyzer
-                )
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }, ContextCompat.getMainExecutor(this))
-    }
-
-    private fun processImage(imageProxy: ImageProxy) {
-        val buffer = imageProxy.planes[0].buffer
-        val bytes = ByteArray(buffer.remaining())
-        buffer.get(bytes)
-
-        // Обчислення середньої яскравості
-        val averageBrightness = bytes.map { it.toInt() and 0xFF }.average()
-
-        // Логіка перевірки: якщо яскравість нижча за поріг, запустити нову активність
-        if (averageBrightness < 20) { // Поріг можна налаштувати
-            runOnUiThread {
-                //Toast.makeText(this, "Finger is on Camera", Toast.LENGTH_SHORT).show()
-                val intent = Intent(this, Homepage3::class.java)
-                startActivity(intent)
-                finish()
-            }
-        }
-    }
-
-
-
-
 }
