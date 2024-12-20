@@ -48,7 +48,7 @@ class Homepage3 : AppCompatActivity() {
             if (animation.animatedFraction == 1f) {
                 val bpm = calculatePulse()
                 val intent = Intent(this, ResultActivity::class.java).apply {
-                    putExtra("BPM", bpm) // Передача результату пульсу
+                    putExtra("BPM", bpm)
                 }
                 startActivity(intent)
                 finish()

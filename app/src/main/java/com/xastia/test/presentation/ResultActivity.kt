@@ -37,7 +37,7 @@ class ResultActivity : AppCompatActivity() {
         val date = getDateUseCase.execute()
         val time = getTimeUseCase.execute()
 
-        bpm = 100
+        //bpm = 50
 
         binding.date.text = time + "\n" + date
         CoroutineScope(Dispatchers.IO).launch {
@@ -72,13 +72,19 @@ class ResultActivity : AppCompatActivity() {
             binding.textView5.text = getString(R.string.slow)
             binding.textView5.setTextColor(ContextCompat.getColor(this, R.color.blue))
             binding.textSlow.setTextColor(ContextCompat.getColor(this, R.color.black))
-            duration = ( bpm * 0.11f ) / 60
+            duration = ( bpm * 0.1f ) / 60
         }
         else if(bpm in 60..100) {
+            if(bpm == 60) {
+                duration = 0.11f
+            }
+            else {
+                duration = ( bpm * 0.33f ) / 100
+            }
             binding.textView5.text = getString(R.string.normal)
             binding.textView5.setTextColor(ContextCompat.getColor(this, R.color.green))
             binding.textNormal.setTextColor(ContextCompat.getColor(this, R.color.black))
-            duration = ( bpm * 0.33f ) / 100
+
         }
         else {
             binding.textView5.text = getString(R.string.fast)
