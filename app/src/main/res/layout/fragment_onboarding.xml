@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Один слайд онбордингу. Шаблон для обох слайдів — контент задається з
+  OnboardingFragment.newInstance(...) через arguments (ICON_RES, CARD_BG_RES,
+  ICON_TINT, TITLE_RES, BODY_RES).
+-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingStart="32dp"
+    android:paddingEnd="32dp"
+    android:paddingTop="80dp">
+
+    <FrameLayout
+        android:id="@+id/illustrationCard"
+        android:layout_width="0dp"
+        android:layout_height="220dp"
+        android:background="@drawable/bg_card_coral_light"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:id="@+id/illustrationIcon"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_heart"
+            android:contentDescription="@null"
+            app:tint="@color/coral" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/slideTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:textColor="@color/text_primary"
+        android:textSize="22sp"
+        android:lineSpacingExtra="2dp"
+        app:fontFamily="@font/rubik_semibold"
+        app:layout_constraintTop_toBottomOf="@id/illustrationCard"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="Ваш пульс — за один дотик" />
+
+    <TextView
+        android:id="@+id/slideBody"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:textColor="@color/text_secondary"
+        android:textSize="14sp"
+        android:lineSpacingExtra="4dp"
+        app:fontFamily="@font/rubik"
+        app:layout_constraintTop_toBottomOf="@id/slideTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="Pulsa вимірює серцевий ритм безпосередньо камерою смартфона. Без додаткових пристроїв." />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

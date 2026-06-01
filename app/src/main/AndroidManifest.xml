@@ -23,23 +23,23 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".presentation.Homepage3"
+            android:name=".presentation.MeasureActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".presentation.History"
+            android:name=".presentation.HistoryActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".presentation.Homepage2"
+            android:name=".presentation.InstructionActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".presentation.Homepage1"
+            android:name=".presentation.HomeActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".presentation.Onboarding1"
+            android:name=".presentation.OnboardingActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity

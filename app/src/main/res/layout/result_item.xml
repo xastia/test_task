@@ -1,73 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Картка одного вимірювання в історії.
+  Зліва — вертикальний кольоровий маркер (sage/amber/coral у залежності від BPM).
+  Центр — BPM великим, дата/час маленьким.
+-->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginStart="4dp"
+    android:layout_marginTop="6dp"
+    android:layout_marginEnd="4dp"
+    android:layout_marginBottom="6dp"
+    android:background="@drawable/bg_card_white"
+    android:paddingStart="16dp"
+    android:paddingTop="14dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="14dp">
 
-    <androidx.cardview.widget.CardView
-        android:layout_width="0dp"
-        android:layout_height="98dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        app:cardCornerRadius="13dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+    <!-- Кольоровий маркер статусу. Drawable виставляється у ResultAdapter (sage/amber/coral). -->
+    <View
+        android:id="@+id/statusMarker"
+        android:layout_width="5dp"
+        android:layout_height="36dp"
+        android:background="@drawable/bg_status_marker_sage"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="horizontal">
+    <TextView
+        android:id="@+id/resultText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:text="0 BPM"
+        android:textColor="@color/text_primary"
+        android:textSize="22sp"
+        android:includeFontPadding="false"
+        app:fontFamily="@font/rubik_semibold"
+        app:layout_constraintStart_toEndOf="@id/statusMarker"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
-            <TextView
-                android:id="@+id/resultText"
-                android:layout_width="103dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="80 BPM"
-                android:textSize="36sp"
-                app:fontFamily="@font/rubik_semibold" />
+    <TextView
+        android:id="@+id/time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="11:07"
+        android:textColor="@color/text_secondary"
+        android:textSize="13sp"
+        app:fontFamily="@font/rubik"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-            <ImageView
-                android:id="@+id/imageView9"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/divider" />
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:text="—"
+        android:textColor="@color/text_secondary"
+        android:textSize="11sp"
+        app:fontFamily="@font/rubik"
+        app:layout_constraintTop_toBottomOf="@id/time"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-            <LinearLayout
-                android:layout_width="81dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/time"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="11:07"
-                    android:textAlignment="textStart"
-                    android:textColor="#707070"
-                    android:textSize="24sp"
-                    app:fontFamily="@font/rubik" />
-
-                <TextView
-                    android:id="@+id/date"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="18/12/2024"
-                    android:textAlignment="textStart"
-                    android:textColor="#707070"
-                    android:textSize="24sp"
-                    app:fontFamily="@font/rubik" />
-            </LinearLayout>
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

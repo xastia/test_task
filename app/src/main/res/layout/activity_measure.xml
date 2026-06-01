@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Екран активного вимірювання.
+  - Топ: кнопка закрити (поки що не функціональна)
+  - Центр: pulseContainer — кораловий BPM-кружок із концентричними кільцями
+    (pulseRing1, pulseRing2) — анімуються через ObjectAnimator
+  - Нижче: статус, hint, loading dots, waveform
+  - lottieLoading лишається невидимий — драйвить навігацію до ResultActivity
+-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/cream"
+    android:paddingStart="24dp"
+    android:paddingTop="48dp"
+    android:paddingEnd="24dp"
+    android:paddingBottom="40dp"
+    tools:context=".presentation.MeasureActivity">
+
+    <!-- Топ: кнопка закрити (декоративна, без onClick) -->
+    <View
+        android:id="@+id/closeBtn"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/bg_circle_cream_secondary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/ic_close"
+        android:contentDescription="@android:string/cancel"
+        app:tint="@color/text_secondary"
+        app:layout_constraintStart_toStartOf="@id/closeBtn"
+        app:layout_constraintEnd_toEndOf="@id/closeBtn"
+        app:layout_constraintTop_toTopOf="@id/closeBtn"
+        app:layout_constraintBottom_toBottomOf="@id/closeBtn" />
+
+    <!-- Центральний pulseContainer -->
+    <FrameLayout
+        android:id="@+id/pulseContainer"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.32">
+
+        <!-- Зовнішнє кільце (анімується scale 0.8→1.5 + alpha 0.5→0) -->
+        <View
+            android:id="@+id/pulseRing1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:alpha="0"
+            android:background="@drawable/bg_pulse_ring" />
+
+        <!-- Друге кільце (відстань у пів-циклі) -->
+        <View
+            android:id="@+id/pulseRing2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:alpha="0"
+            android:background="@drawable/bg_pulse_ring" />
+
+        <!-- BPM-ядро -->
+        <FrameLayout
+            android:id="@+id/bpmCore"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_circle_coral">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/textView8"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="@color/text_on_coral"
+                    android:textSize="36sp"
+                    android:includeFontPadding="false"
+                    app:fontFamily="@font/rubik_semibold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-2dp"
+                    android:text="@string/measure_bpm_unit"
+                    android:textColor="@color/coral_pale"
+                    android:textSize="10sp"
+                    android:includeFontPadding="false"
+                    app:fontFamily="@font/rubik" />
+            </LinearLayout>
+        </FrameLayout>
+    </FrameLayout>
+
+    <!-- Статус "Йде вимірювання" -->
+    <TextView
+        android:id="@+id/statusText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/measure_status_active"
+        android:textColor="@color/text_primary"
+        android:textSize="16sp"
+        app:fontFamily="@font/rubik_semibold"
+        app:layout_constraintTop_toBottomOf="@id/pulseContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/hintText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="@string/measure_hold_still"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp"
+        app:fontFamily="@font/rubik"
+        app:layout_constraintTop_toBottomOf="@id/statusText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Loading dots (3 точки спалахують послідовно) -->
+    <LinearLayout
+        android:id="@+id/dotsContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/hintText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <View
+            android:id="@+id/dot1"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:background="@drawable/bg_circle_coral" />
+
+        <View
+            android:id="@+id/dot2"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/bg_circle_coral" />
+
+        <View
+            android:id="@+id/dot3"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/bg_circle_coral" />
+    </LinearLayout>
+
+    <!-- Waveform: 7 стовпчиків, висоти анімуються через ObjectAnimator -->
+    <LinearLayout
+        android:id="@+id/waveformContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginBottom="32dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <View
+            android:id="@+id/bar1"
+            android:layout_width="4dp"
+            android:layout_height="12dp"
+            android:background="@color/coral" />
+
+        <View
+            android:id="@+id/bar2"
+            android:layout_width="4dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="6dp"
+            android:background="@color/coral" />
+
+        <View
+            android:id="@+id/bar3"
+            android:layout_width="4dp"
+            android:layout_height="14dp"
+            android:layout_marginStart="6dp"
+            android:background="@color/coral" />
+
+        <View
+            android:id="@+id/bar4"
+            android:layout_width="4dp"
+            android:layout_height="28dp"
+            android:layout_marginStart="6dp"
+            android:background="@color/coral" />
+
+        <View
+            android:id="@+id/bar5"
+            android:layout_width="4dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="6dp"
+            android:background="@color/coral" />
+
+        <View
+            android:id="@+id/bar6"
+            android:layout_width="4dp"
+            android:layout_height="22dp"
+            android:layout_marginStart="6dp"
+            android:background="@color/coral" />
+
+        <View
+            android:id="@+id/bar7"
+            android:layout_width="4dp"
+            android:layout_height="10dp"
+            android:layout_marginStart="6dp"
+            android:background="@color/coral" />
+    </LinearLayout>
+
+    <!-- Невидима PreviewView для камери (аналіз яскравості, brightness data) -->
+    <androidx.camera.view.PreviewView
+        android:id="@+id/preview"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:alpha="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Невидимий Lottie — драйвить навігацію до Result через 20 секунд -->
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottieLoading"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:alpha="0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_fileName="loading.json" />
+
+    <!-- Невидимий lottieHeart — Kotlin-код у MeasureActivity досі викликає playAnimation
+         на ньому. Лишаємо невидимим (потім приберемо разом із Lottie-залежностями). -->
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottieHeart"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:alpha="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_fileName="heart_beating.json" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,258 +1,254 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Екран результату.
+  - Топ-бар: "Результат" + кнопка історії
+  - Карта: великий BPM (анімується counter 0→BPM), pill зі статусом, шкала з позначкою
+  - Низ: коралова pill "Готово"
+-->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/cream"
+    android:paddingStart="24dp"
+    android:paddingTop="48dp"
+    android:paddingEnd="24dp"
+    android:paddingBottom="32dp"
     tools:context=".presentation.ResultActivity">
 
-
-    <ImageView
-        android:id="@+id/backgroundBlue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="231dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.486"
-        app:srcCompat="@drawable/background" />
-
-    <ImageView
-        android:id="@+id/topBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="-5dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/top_bar" />
-
-    <Button
-        android:id="@+id/ready"
-        android:layout_width="333dp"
-        android:layout_height="44dp"
-        android:backgroundTint="#FF6B6B"
-        android:text="@string/ready"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-
+    <!-- Топ-бар -->
     <TextView
         android:id="@+id/result"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="@string/result"
-        android:textColor="@color/white"
-        android:textSize="20sp"
+        android:text="@string/result_title"
+        android:textColor="@color/text_secondary"
+        android:textSize="14sp"
         app:fontFamily="@font/rubik"
-        app:layout_constraintEnd_toStartOf="@+id/history"
-        app:layout_constraintHorizontal_bias="0.09"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageButton
-        android:id="@+id/historyButton"
-        android:layout_width="69dp"
-        android:layout_height="57dp"
-        android:layout_marginTop="-5dp"
-        android:background="@android:color/transparent"
-        app:layout_constraintBottom_toBottomOf="@+id/topBar"
-        app:layout_constraintEnd_toEndOf="@+id/topBar"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/history_button" />
+        app:layout_constraintBottom_toBottomOf="@id/historyButton" />
 
     <TextView
         android:id="@+id/history"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="13dp"
-        android:text="@string/history"
-        android:textColor="@color/white"
-        android:textSize="20sp"
+        android:layout_marginEnd="12dp"
+        android:text="@string/history_title"
+        android:textColor="@color/text_secondary"
+        android:textSize="13sp"
         app:fontFamily="@font/rubik"
-        app:layout_constraintEnd_toStartOf="@+id/historyButton"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/historyButton"
+        app:layout_constraintBottom_toBottomOf="@id/historyButton"
+        app:layout_constraintEnd_toStartOf="@id/historyButton" />
+
+    <ImageButton
+        android:id="@+id/historyButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/bg_circle_cream_secondary"
+        android:src="@drawable/ic_clock"
+        android:scaleType="center"
+        android:contentDescription="@string/history_title"
+        app:tint="@color/text_secondary"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.cardview.widget.CardView
-        android:layout_width="351dp"
-        android:layout_height="252dp"
-        app:cardCornerRadius="20dp"
-        app:layout_constraintBottom_toBottomOf="@+id/backgroundBlue"
-        app:layout_constraintEnd_toEndOf="parent"
+    <!-- Картка з результатом -->
+    <LinearLayout
+        android:id="@+id/resultCard"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/bg_card_white"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center_horizontal"
+        app:layout_constraintTop_toBottomOf="@id/historyButton"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/topBar" >
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Велике число BPM (анімується 0 → bpm у ValueAnimator) -->
+        <TextView
+            android:id="@+id/bpmNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textColor="@color/text_primary"
+            android:textSize="64sp"
+            android:includeFontPadding="false"
+            app:fontFamily="@font/rubik_semibold" />
+
+        <TextView
+            android:id="@+id/bpmUnit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/result_bpm_unit"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp"
+            app:fontFamily="@font/rubik" />
+
+        <!-- Pill статус: фон і колір тексту виставляються у ResultActivity.kt -->
+        <TextView
+            android:id="@+id/statusPill"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:background="@drawable/bg_status_pill_sage"
+            android:paddingStart="14dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="14dp"
+            android:paddingBottom="6dp"
+            android:text="@string/result_status_normal"
+            android:textColor="@color/sage_dark"
+            android:textSize="12sp"
+            app:fontFamily="@font/rubik_semibold" />
+
+        <!-- Шкала: трек + позначка -->
+        <FrameLayout
+            android:id="@+id/scaleContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="6dp"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/bg_scale_track" />
+
+            <!-- Позначка на шкалі. layout_marginStart встановлюється у Kotlin -->
+            <View
+                android:id="@+id/scaleDot"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_gravity="center_vertical|start"
+                android:background="@drawable/bg_scale_dot_sage" />
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:paddingTop="10dp">
-
-                <TextView
-                    android:id="@+id/textView2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingLeft="20dp"
-                    android:text="Ваш Результат"
-                    android:textColor="@color/black"
-                    android:textSize="18sp"
-                    app:fontFamily="@font/rubik_semibold" />
-
-                <ImageView
-                    android:id="@+id/imageView11"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    app:srcCompat="@drawable/time" />
-
-                <TextView
-                    android:id="@+id/date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="11:07\n16/05/2005"
-                    android:textColor="#707070"
-                    android:textSize="16sp"
-                    app:fontFamily="@font/rubik" />
-
-            </LinearLayout>
+            android:layout_marginTop="6dp"
+            android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/textView5"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:paddingLeft="20dp"
-                android:text="Звичайно"
-                android:textColor="#1CE4B5"
-                android:textSize="28sp"
-                app:fontFamily="@font/rubik_bold" />
+                android:layout_weight="1"
+                android:text="40"
+                android:textColor="@color/text_secondary"
+                android:textSize="10sp"
+                android:textAlignment="textStart"
+                app:fontFamily="@font/rubik" />
 
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="70"
+                android:textColor="@color/text_secondary"
+                android:textSize="10sp"
+                android:textAlignment="center"
+                app:fontFamily="@font/rubik" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="100"
+                android:textColor="@color/text_secondary"
+                android:textSize="10sp"
+                android:textAlignment="center"
+                app:fontFamily="@font/rubik" />
 
-                <com.airbnb.lottie.LottieAnimationView
-                    android:id="@+id/res_bar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:lottie_fileName="res_bar.json" />
-
-                <LinearLayout
-                    android:id="@+id/linearLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:orientation="horizontal"
-                    android:paddingTop="20dp"
-                    android:paddingBottom="12dp"
-                    app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <ImageView
-                        android:id="@+id/imageView14"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingStart="20dp"
-                        app:srcCompat="@drawable/slow_res" />
-
-                    <TextView
-                        android:id="@+id/textSlow"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:paddingStart="135dp"
-                        android:text="&lt;60 BPM"
-                        android:textColor="#A1A9AF"
-                        android:textSize="12sp"
-                        app:fontFamily="@font/rubik" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/linearLayout2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingBottom="12dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/res_bar">
-
-                    <ImageView
-                        android:id="@+id/imageView15"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingStart="20dp"
-                        app:srcCompat="@drawable/common_res" />
-
-                    <TextView
-                        android:id="@+id/textNormal"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:paddingStart="115dp"
-                        android:text="60-100 BPM"
-                        android:textColor="#707070"
-                        android:textSize="12sp"
-                        app:fontFamily="@font/rubik" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
-
-                    <ImageView
-                        android:id="@+id/imageView16"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingStart="20dp"
-                        app:srcCompat="@drawable/fast_res" />
-
-                    <TextView
-                        android:id="@+id/textFast"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:paddingStart="130dp"
-                        android:text="&gt;100 BPM"
-                        android:textColor="#A1A9AF"
-                        android:textSize="12sp"
-                        app:fontFamily="@font/rubik" />
-                </LinearLayout>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="140"
+                android:textColor="@color/text_secondary"
+                android:textSize="10sp"
+                android:textAlignment="textEnd"
+                app:fontFamily="@font/rubik" />
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
 
+        <!-- Дата/час (зберігаються в БД, на картці показуємо маленьким) -->
+        <TextView
+            android:id="@+id/date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text=""
+            android:textColor="@color/text_secondary"
+            android:textSize="10sp"
+            android:gravity="center"
+            app:fontFamily="@font/rubik" />
+    </LinearLayout>
+
+    <!-- Кнопка "Готово" -->
+    <Button
+        android:id="@+id/ready"
+        android:layout_width="0dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/bg_button_coral"
+        android:text="@string/result_ready"
+        android:textColor="@color/text_on_coral"
+        android:textSize="16sp"
+        android:textAllCaps="false"
+        app:fontFamily="@font/rubik_semibold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <!-- Legacy IDs (ResultActivity.kt поки звертається до них). Невидимі. -->
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:alpha="0"
+        android:text=""
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textSlow"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:alpha="0"
+        android:text=""
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textNormal"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:alpha="0"
+        android:text=""
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textFast"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:alpha="0"
+        android:text=""
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/resBar"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:alpha="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_fileName="res_bar.json" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

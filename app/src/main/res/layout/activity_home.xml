@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Головний екран (порожня історія).
+  - Топ-бар: назва Pulsa + кругла кнопка історії
+  - Центр: коралове коло з серцем (анімація breathing у Kotlin)
+  - Низ: коралова кругла кнопка-старт
+-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/cream"
+    android:paddingStart="24dp"
+    android:paddingTop="48dp"
+    android:paddingEnd="24dp"
+    android:paddingBottom="32dp"
+    tools:context=".presentation.HomeActivity">
+
+    <!-- Топ-бар: назва + кнопка історії -->
+    <TextView
+        android:id="@+id/appNameLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:textColor="@color/text_primary"
+        android:textSize="18sp"
+        android:letterSpacing="0.04"
+        app:fontFamily="@font/rubik_semibold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/historyButton" />
+
+    <ImageButton
+        android:id="@+id/historyButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/bg_circle_cream_secondary"
+        android:src="@drawable/ic_clock"
+        android:scaleType="center"
+        android:contentDescription="@string/history_title"
+        app:tint="@color/text_secondary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Центральний блок: дихаюче серце + текст -->
+    <FrameLayout
+        android:id="@+id/breathingHeartCircle"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:background="@drawable/bg_circle_coral_light"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.35">
+
+        <ImageView
+            android:id="@+id/breathingHeart"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_heart"
+            android:contentDescription="@null"
+            app:tint="@color/coral" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/emptyTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:text="@string/home_title_empty"
+        android:textColor="@color/text_primary"
+        android:textSize="18sp"
+        android:textAlignment="center"
+        app:fontFamily="@font/rubik_semibold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/breathingHeartCircle" />
+
+    <TextView
+        android:id="@+id/emptyBody"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:text="@string/home_body_empty"
+        android:textColor="@color/text_secondary"
+        android:textSize="13sp"
+        android:textAlignment="center"
+        android:lineSpacingExtra="3dp"
+        app:fontFamily="@font/rubik"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/emptyTitle" />
+
+    <!-- Кругла кнопка-старт -->
+    <ImageButton
+        android:id="@+id/heartButton"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:background="@drawable/bg_circle_coral"
+        android:src="@drawable/ic_play"
+        android:scaleType="center"
+        android:contentDescription="@string/home_start_button"
+        app:tint="@color/text_on_coral"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

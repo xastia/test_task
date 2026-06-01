@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Заокруглена карточка-ілюстрація на онбордингу (шавлієва) -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/sage_light" />
+    <corners android:radius="14dp" />
+</shape>

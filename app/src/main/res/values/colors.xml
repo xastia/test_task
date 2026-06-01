@@ -1,9 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="blue">#55ADFF</color>
-    <color name="green">#1CE4B5</color>
-    <color name="orange">#FF5B5B</color>
-    <color name="greenkk">#1CE4B5</color>
+
+    <!-- =============================================== -->
+    <!-- Pulsa calm wellness palette                     -->
+    <!-- =============================================== -->
+
+    <!-- Primary brand: muted coral -->
+    <color name="coral">#C97163</color>
+    <color name="coral_light">#F5DCD3</color>
+    <color name="coral_pale">#FBE6DF</color>
+    <color name="coral_dark">#8B4A3D</color>
+
+    <!-- Status: normal (sage green) -->
+    <color name="sage">#6B9C7E</color>
+    <color name="sage_light">#E1EFE5</color>
+    <color name="sage_dark">#4D7D5E</color>
+
+    <!-- Status: slow / fast (muted amber) -->
+    <color name="amber">#D9A877</color>
+    <color name="amber_light">#F5E4D0</color>
+    <color name="amber_dark">#8A6534</color>
+
+    <!-- Accent: instruction (lilac) -->
+    <color name="lilac">#9B7BAB</color>
+    <color name="lilac_light">#EFE6F0</color>
+
+    <!-- Surfaces -->
+    <color name="cream">#FBF7F2</color>
+    <color name="cream_secondary">#F0E6DC</color>
+    <color name="surface_white">#FFFFFF</color>
+    <color name="divider_warm">#E5DDD3</color>
+
+    <!-- Text -->
+    <color name="text_primary">#3A2E2A</color>
+    <color name="text_secondary">#8B7E78</color>
+    <color name="text_on_coral">#FFFFFF</color>
+
+    <!-- =============================================== -->
+    <!-- Legacy aliases (поки не оновлені всі лейаути)   -->
+    <!-- =============================================== -->
+    <color name="black">#3A2E2A</color>
+    <color name="white">#FFFFFF</color>
+    <color name="blue">#D9A877</color>     <!-- slow status was blue, тепер amber -->
+    <color name="green">#6B9C7E</color>    <!-- normal status was bright green, тепер sage -->
+    <color name="orange">#C97163</color>   <!-- fast status was red-orange, тепер coral -->
+    <color name="greenkk">#6B9C7E</color>
+
 </resources>

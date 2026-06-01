@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         }
         binding.lottieLoading.addAnimatorUpdateListener { animation ->
             if (animation.animatedFraction == 1f) {
-                val intent = Intent(this, Onboarding1::class.java)
+                val intent = Intent(this, OnboardingActivity::class.java)
                 startActivity(intent)
                 finish()
             }
