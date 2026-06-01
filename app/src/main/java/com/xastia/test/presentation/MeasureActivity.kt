@@ -45,6 +45,7 @@ class MeasureActivity : AppCompatActivity() {
 
     private val animators = mutableListOf<Animator>()
     private var torchEnabled = false
+    private var frameCount = 0
 
     // Скільки кадрів підряд без пальця, перш ніж показати overlay «поверніть палець».
     // 15 кадрів ~ 0.5 сек при 30 fps — достатньо щоб не реагувати на короткочасні
@@ -101,12 +102,21 @@ class MeasureActivity : AppCompatActivity() {
                     cameraRepository.enableTorch(true)
                     torchEnabled = true
                 }
+                // Періодичне re-enable torch кожні ~30 кадрів (приблизно секунда).
+                // На MIUI та інших скінах CameraX час від часу скидає torch state
+                // — це дешевий call який гарантує що ліхтарик завжди увімкнений.
+                frameCount++
+                if (frameCount % 30 == 0) {
+                    cameraRepository.enableTorch(true)
+                }
                 if (!isMeasuring) return@collect
 
                 // Кожен кадр перевіряємо чи палець на лінзі.
-                // R/G/B ratio — точніша сигнатура, ніж простий R-канал.
+                // isFingerLenient (а не Strict) — палець уже був підтверджений у
+                // InstructionActivity, тут лише слідкуємо чи не зник. М'який поріг
+                // запобігає миготінню overlay через коливання auto-exposure.
                 val rgb = cameraRepository.analyzeRgb(imageProxy)
-                val fingerPresent = fingerDetector.isFinger(rgb)
+                val fingerPresent = fingerDetector.isFingerLenient(rgb)
 
                 if (fingerPresent) {
                     // Палець на лінзі — додаємо семпл і ховаємо overlay якщо був.
@@ -132,10 +142,15 @@ class MeasureActivity : AppCompatActivity() {
      * Показати overlay і призупинити "таймер" вимірювання (Lottie loading).
      * Призупинення зберігає 20-секундний бюджет на чистий PPG-сигнал —
      * якщо користувач забрав палець на 5 сек, ці 5 сек не "зʼїдять" час.
+     *
+     * На MIUI / старіших Xiaomi CameraX може автоматично вимикати torch
+     * при будь-яких UI-операціях. Тому при кожній зміні стану overlay
+     * примусово re-enable torch — це cheap call і гарантує постійне світло.
      */
     private fun showNoFingerOverlay() {
         if (overlayShown) return
         overlayShown = true
+        cameraRepository.enableTorch(true) // примусово, на випадок якщо MIUI його вимкнув
         binding.lottieLoading.pauseAnimation()
         binding.noFingerOverlay.visibility = View.VISIBLE
         binding.noFingerOverlay.animate().alpha(1f).setDuration(200).start()
@@ -144,6 +159,7 @@ class MeasureActivity : AppCompatActivity() {
     private fun hideNoFingerOverlay() {
         if (!overlayShown) return
         overlayShown = false
+        cameraRepository.enableTorch(true) // та сама causa, ще раз гарантуємо
         binding.lottieLoading.resumeAnimation()
         binding.noFingerOverlay.animate()
             .alpha(0f)

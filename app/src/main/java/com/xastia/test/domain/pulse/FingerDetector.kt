@@ -22,24 +22,41 @@ data class RgbChannels(val r: Double, val g: Double, val b: Double)
 class FingerDetector {
 
     /**
-     * Повертає true, якщо канали відповідають сигнатурі «палець з torch на лінзі».
-     *
-     * Критерії:
-     *  - R абсолютно високий (> minRed) — щоб відсіяти темні сцени
-     *  - R/G > 1.5 — червоне домінує над зеленим
-     *  - R/B > 1.5 — червоне домінує над синім
+     * Суворий тест — для першої детекції (InstructionActivity).
+     * Має чітко відрізнити палець від випадкових червоних об'єктів.
      */
-    fun isFinger(channels: RgbChannels): Boolean {
-        if (channels.r < MIN_RED) return false
+    fun isFingerStrict(channels: RgbChannels): Boolean {
+        if (channels.r < STRICT_MIN_RED) return false
         val g = channels.g.coerceAtLeast(1.0)
         val b = channels.b.coerceAtLeast(1.0)
-        return channels.r / g >= MIN_R_TO_G_RATIO &&
-                channels.r / b >= MIN_R_TO_B_RATIO
+        return channels.r / g >= STRICT_R_TO_G &&
+                channels.r / b >= STRICT_R_TO_B
     }
 
+    /**
+     * М'який тест — для continuous-перевірки під час вимірювання (MeasureActivity),
+     * коли палець уже підтверджений у InstructionActivity.
+     * Менш суворі пороги — hysteresis запобігає миготінню overlay коли ratio
+     * коливається біля строгого порогу через automatic-exposure.
+     */
+    fun isFingerLenient(channels: RgbChannels): Boolean {
+        if (channels.r < LENIENT_MIN_RED) return false
+        val g = channels.g.coerceAtLeast(1.0)
+        val b = channels.b.coerceAtLeast(1.0)
+        return channels.r / g >= LENIENT_R_TO_G &&
+                channels.r / b >= LENIENT_R_TO_B
+    }
+
+    /** Збережено для зворотної сумісності — еквівалент isFingerStrict. */
+    fun isFinger(channels: RgbChannels): Boolean = isFingerStrict(channels)
+
     companion object {
-        const val MIN_RED = 120.0
-        const val MIN_R_TO_G_RATIO = 1.5
-        const val MIN_R_TO_B_RATIO = 1.5
+        const val STRICT_MIN_RED = 110.0
+        const val STRICT_R_TO_G = 1.4
+        const val STRICT_R_TO_B = 1.4
+
+        const val LENIENT_MIN_RED = 90.0
+        const val LENIENT_R_TO_G = 1.15
+        const val LENIENT_R_TO_B = 1.15
     }
 }
