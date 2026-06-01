@@ -74,22 +74,23 @@
             android:gravity="center">
 
             <View
+                android:id="@+id/splashDot1"
                 android:layout_width="6dp"
                 android:layout_height="6dp"
                 android:background="@drawable/bg_circle_coral" />
 
             <View
+                android:id="@+id/splashDot2"
                 android:layout_width="6dp"
                 android:layout_height="6dp"
                 android:layout_marginStart="6dp"
-                android:alpha="0.45"
                 android:background="@drawable/bg_circle_coral" />
 
             <View
+                android:id="@+id/splashDot3"
                 android:layout_width="6dp"
                 android:layout_height="6dp"
                 android:layout_marginStart="6dp"
-                android:alpha="0.25"
                 android:background="@drawable/bg_circle_coral" />
         </LinearLayout>
 
