@@ -17,6 +17,7 @@ import com.xastia.test.domain.models.Result
 import com.xastia.test.domain.usecase.AddResultUseCase
 import com.xastia.test.domain.usecase.GetDateUseCase
 import com.xastia.test.domain.usecase.GetTimeUseCase
+import com.xastia.test.presentation.ext.applyStatusBarTopPadding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,6 +30,7 @@ class ResultActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityResultBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.root.applyStatusBarTopPadding(extraDp = 12)
 
         val bpm = intent.getIntExtra("BPM", 0)
         val db = MainDb.getDb(this)

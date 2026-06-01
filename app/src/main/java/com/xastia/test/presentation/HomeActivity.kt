@@ -13,6 +13,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.xastia.test.R
 import com.xastia.test.databinding.ActivityHomeBinding
+import com.xastia.test.presentation.ext.applyStatusBarTopPadding
 
 class HomeActivity : AppCompatActivity() {
 
@@ -32,6 +33,7 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.root.applyStatusBarTopPadding(extraDp = 12)
 
         startBreathingAnimation()
 

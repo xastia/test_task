@@ -12,6 +12,7 @@ import com.xastia.test.domain.models.Result
 import com.xastia.test.data.ResultAdapter
 import com.xastia.test.data.repository.ResultRepositoryImpl
 import com.xastia.test.databinding.ActivityHistoryBinding
+import com.xastia.test.presentation.ext.applyStatusBarTopPadding
 import com.xastia.test.domain.usecase.ClearHistoryUseCase
 import com.xastia.test.domain.usecase.ShowHistoryUseCase
 import kotlinx.coroutines.CoroutineScope
@@ -26,6 +27,7 @@ class HistoryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityHistoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.root.applyStatusBarTopPadding(extraDp = 12)
 
         val db = MainDb.getDb(this)
         val resultRepository = ResultRepositoryImpl(db)

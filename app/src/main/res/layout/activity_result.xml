@@ -12,7 +12,6 @@
     android:layout_height="match_parent"
     android:background="@color/cream"
     android:paddingStart="24dp"
-    android:paddingTop="48dp"
     android:paddingEnd="24dp"
     android:paddingBottom="32dp"
     tools:context=".presentation.ResultActivity">
@@ -188,14 +187,16 @@
             app:fontFamily="@font/rubik" />
     </LinearLayout>
 
-    <!-- Кнопка "Готово" -->
-    <Button
+    <!-- Кнопка "Готово". AppCompatButton щоб коралова заливка не перебилась
+         Material-темою на фіолетове. -->
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/ready"
         android:layout_width="0dp"
         android:layout_height="52dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:background="@drawable/bg_button_coral"
+        android:stateListAnimator="@null"
         android:text="@string/result_ready"
         android:textColor="@color/text_on_coral"
         android:textSize="16sp"

@@ -14,7 +14,6 @@
     android:layout_height="match_parent"
     android:background="@color/cream"
     android:paddingStart="24dp"
-    android:paddingTop="48dp"
     android:paddingEnd="24dp"
     android:paddingBottom="40dp"
     tools:context=".presentation.MeasureActivity">

@@ -12,7 +12,6 @@
     android:layout_height="match_parent"
     android:background="@color/cream"
     android:paddingStart="24dp"
-    android:paddingTop="48dp"
     android:paddingEnd="24dp"
     android:paddingBottom="32dp"
     tools:context=".presentation.HomeActivity">

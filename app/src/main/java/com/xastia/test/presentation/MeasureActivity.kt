@@ -16,6 +16,7 @@ import com.xastia.test.data.repository.CameraRepositoryImpl
 import com.xastia.test.databinding.ActivityMeasureBinding
 import com.xastia.test.domain.pulse.PpgProcessor
 import com.xastia.test.domain.usecase.StartCameraUseCase
+import com.xastia.test.presentation.ext.applyStatusBarTopPadding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -46,6 +47,7 @@ class MeasureActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMeasureBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.root.applyStatusBarTopPadding(extraDp = 12)
 
         handler = Handler(Looper.getMainLooper())
         cameraRepository = CameraRepositoryImpl(this, Executors.newSingleThreadExecutor())

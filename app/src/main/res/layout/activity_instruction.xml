@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   Екран інструкції: "Прикладіть палець до камери".
-  - Топ: кнопка-закрити
-  - Центр: позначка-камера + заголовок + опис
-  - Низ: лілова карта з іконкою пальця
 
-  preview — PreviewView, схований у кутку. Потрібен щоб CameraX міг аналізувати
-  яскравість і визначити коли користувач закрив об'єктив пальцем.
+  Тепер PreviewView ВИДИМИЙ — у круглому CardView 110dp. Користувач бачить
+  що камера дійсно працює (без пальця — звичайна картинка, з пальцем — червоне).
+  Це дає очевидний зворотний зв'язок.
+
+  Детекція пальця — у InstructionActivity.kt через R-канал (R > 120 + warmup
+  + consecutive frames).
 -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -15,7 +16,6 @@
     android:layout_height="match_parent"
     android:background="@color/cream"
     android:paddingStart="24dp"
-    android:paddingTop="48dp"
     android:paddingEnd="24dp"
     android:paddingBottom="32dp"
     tools:context=".presentation.InstructionActivity">
@@ -33,22 +33,31 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Декоративний кружок "об'єктив камери" + текст інструкції -->
-    <View
+    <!-- КРУГЛИЙ PREVIEW з камери. CardView з cardCornerRadius=55dp на view 110dp
+         = круг. cardElevation=0 щоб не було тіні. -->
+    <androidx.cardview.widget.CardView
         android:id="@+id/cameraMark"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_marginTop="56dp"
-        android:background="@drawable/bg_camera_circle_dark"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:layout_marginTop="48dp"
+        app:cardCornerRadius="55dp"
+        app:cardElevation="0dp"
+        app:cardBackgroundColor="@color/text_primary"
         app:layout_constraintTop_toBottomOf="@id/imageButton"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.camera.view.PreviewView
+            android:id="@+id/preview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </androidx.cardview.widget.CardView>
 
     <TextView
         android:id="@+id/checkingPulse"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="24dp"
         android:text="@string/instruction_title"
         android:textColor="@color/text_primary"
         android:textSize="18sp"
@@ -93,15 +102,5 @@
             android:contentDescription="@null"
             app:tint="@color/lilac" />
     </FrameLayout>
-
-    <!-- Невидима PreviewView для аналізу яскравості (детекція пальця).
-         Розмір 1dp, alpha 0 — для CameraX-аналізатора цього достатньо. -->
-    <androidx.camera.view.PreviewView
-        android:id="@+id/preview"
-        android:layout_width="1dp"
-        android:layout_height="1dp"
-        android:alpha="0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
