@@ -14,9 +14,11 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.xastia.test.data.repository.CameraRepositoryImpl
 import com.xastia.test.databinding.ActivityMeasureBinding
+import com.xastia.test.domain.pulse.FingerDetector
 import com.xastia.test.domain.pulse.PpgProcessor
 import com.xastia.test.domain.usecase.StartCameraUseCase
 import com.xastia.test.presentation.ext.applyStatusBarTopPadding
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -36,12 +38,20 @@ import java.util.concurrent.Executors
 class MeasureActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMeasureBinding
     private val ppgProcessor = PpgProcessor()
+    private val fingerDetector = FingerDetector()
     @Volatile private var isMeasuring = true
     private lateinit var handler: Handler
     private lateinit var cameraRepository: CameraRepositoryImpl
 
     private val animators = mutableListOf<Animator>()
     private var torchEnabled = false
+
+    // Скільки кадрів підряд без пальця, перш ніж показати overlay «поверніть палець».
+    // 15 кадрів ~ 0.5 сек при 30 fps — достатньо щоб не реагувати на короткочасні
+    // спалахи руху, але швидко показати overlay коли палець реально знято.
+    private val noFingerThresholdFrames = 15
+    private var consecutiveNoFinger = 0
+    @Volatile private var overlayShown = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,18 +96,60 @@ class MeasureActivity : AppCompatActivity() {
     private suspend fun startCamera() {
         val startCameraUseCase = StartCameraUseCase(cameraRepository)
         startCameraUseCase.execute(binding.preview).collect { imageProxy ->
-            // Включаємо torch після першого кадру — на цей момент Camera-об'єкт
-            // уже точно існує і cameraControl.enableTorch() спрацює.
-            if (!torchEnabled) {
-                cameraRepository.enableTorch(true)
-                torchEnabled = true
+            try {
+                if (!torchEnabled) {
+                    cameraRepository.enableTorch(true)
+                    torchEnabled = true
+                }
+                if (!isMeasuring) return@collect
+
+                // Кожен кадр перевіряємо чи палець на лінзі.
+                // R/G/B ratio — точніша сигнатура, ніж простий R-канал.
+                val rgb = cameraRepository.analyzeRgb(imageProxy)
+                val fingerPresent = fingerDetector.isFinger(rgb)
+
+                if (fingerPresent) {
+                    // Палець на лінзі — додаємо семпл і ховаємо overlay якщо був.
+                    consecutiveNoFinger = 0
+                    ppgProcessor.addSample(System.currentTimeMillis(), rgb.r)
+                    if (overlayShown) {
+                        withContext(Dispatchers.Main) { hideNoFingerOverlay() }
+                    }
+                } else {
+                    // Палець НЕ виявлений — не накопичуємо сміття у сигнал.
+                    consecutiveNoFinger++
+                    if (consecutiveNoFinger >= noFingerThresholdFrames && !overlayShown) {
+                        withContext(Dispatchers.Main) { showNoFingerOverlay() }
+                    }
+                }
+            } finally {
+                imageProxy.close()
             }
-            if (isMeasuring) {
-                val red = cameraRepository.analyzeRedChannel(imageProxy)
-                ppgProcessor.addSample(System.currentTimeMillis(), red)
-            }
-            imageProxy.close()
         }
+    }
+
+    /**
+     * Показати overlay і призупинити "таймер" вимірювання (Lottie loading).
+     * Призупинення зберігає 20-секундний бюджет на чистий PPG-сигнал —
+     * якщо користувач забрав палець на 5 сек, ці 5 сек не "зʼїдять" час.
+     */
+    private fun showNoFingerOverlay() {
+        if (overlayShown) return
+        overlayShown = true
+        binding.lottieLoading.pauseAnimation()
+        binding.noFingerOverlay.visibility = View.VISIBLE
+        binding.noFingerOverlay.animate().alpha(1f).setDuration(200).start()
+    }
+
+    private fun hideNoFingerOverlay() {
+        if (!overlayShown) return
+        overlayShown = false
+        binding.lottieLoading.resumeAnimation()
+        binding.noFingerOverlay.animate()
+            .alpha(0f)
+            .setDuration(200)
+            .withEndAction { binding.noFingerOverlay.visibility = View.GONE }
+            .start()
     }
 
     /**

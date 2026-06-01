@@ -1,7 +1,7 @@
 package com.xastia.test.domain.pulse
 
 import kotlin.math.PI
-import kotlin.math.cos
+import kotlin.math.sqrt
 
 /**
  * Обчислення частоти серцевих скорочень (ЧСС) із сирого PPG-сигналу,
@@ -55,6 +55,13 @@ class PpgProcessor {
         //    Це прибирає baseline (повільні зміни освітлення, тиску пальця).
         val windowSize = fs.toInt().coerceAtLeast(5)
         val detrended = detrend(raw, windowSize)
+
+        // 1.5) Quality check — амплітуда пульсації має бути достатньою.
+        //      Якщо std dev детрендованого сигналу замала — сигнал плоский
+        //      (палець занадто слабко притиснутий, або кровопостачання слабке,
+        //      або там взагалі не палець). У такому випадку число буде «з пальця».
+        //      Краще повернути 0 (UI покаже "—"), ніж обманути користувача.
+        if (stdDev(detrended) < MIN_STD_DEV) return 0
 
         // 2) Bandpass-фільтр 0.7–3.5 Hz.
         //    0.7 Hz = 42 BPM (нижня межа фізіологічно правдоподібного пульсу)
@@ -160,12 +167,32 @@ class PpgProcessor {
         else (sorted[n / 2 - 1] + sorted[n / 2]) / 2.0
     }
 
+    /**
+     * Стандартне відхилення вибірки. Показник «жвавості» сигналу:
+     * для чистого PPG з detrend ≈ 0.5–3 (видимі пульсації);
+     * для шуму / плоского сигналу ≈ 0.0–0.2.
+     */
+    private fun stdDev(values: List<Double>): Double {
+        if (values.size < 2) return 0.0
+        val mean = values.average()
+        var sumSq = 0.0
+        for (v in values) {
+            val d = v - mean
+            sumSq += d * d
+        }
+        return sqrt(sumSq / values.size)
+    }
+
     companion object {
-        private const val LOW_HZ = 0.7         // 42 BPM
-        private const val HIGH_HZ = 3.5        // 210 BPM
+        private const val LOW_HZ = 0.7              // 42 BPM
+        private const val HIGH_HZ = 3.5             // 210 BPM
         private const val MIN_PEAK_DISTANCE_SEC = 0.35
         private const val MIN_DURATION_SEC = 5.0
         private const val MIN_BPM = 40
         private const val MAX_BPM = 200
+        // Мінімальна амплітуда пульсації — нижче неї сигнал визнаємо
+        // «непридатним» і повертаємо 0. Підбирається емпірично:
+        // 0.3 пропускає слабкі реальні PPG, але блокує плоский шум.
+        private const val MIN_STD_DEV = 0.3
     }
 }

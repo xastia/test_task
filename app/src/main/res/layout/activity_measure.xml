@@ -256,4 +256,67 @@
         app:layout_constraintTop_toTopOf="parent"
         app:lottie_fileName="heart_beating.json" />
 
+    <!-- Overlay який ховає вимірювання коли користувач прибрав палець з камери.
+         Розташований ОСТАННІМ дочірнім елементом — гарантовано зверху усього.
+         Прихований за замовчуванням, показується з MeasureActivity. -->
+    <FrameLayout
+        android:id="@+id/noFingerOverlay"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/cream"
+        android:alpha="0"
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingStart="32dp"
+            android:paddingEnd="32dp">
+
+            <FrameLayout
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:background="@drawable/bg_circle_lilac_light">
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_hand_finger"
+                    android:contentDescription="@null"
+                    app:tint="@color/lilac" />
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Поверніть палець на камеру"
+                android:textColor="@color/text_primary"
+                android:textSize="17sp"
+                android:textAlignment="center"
+                app:fontFamily="@font/rubik_semibold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Вимірювання призупинено\nПрикладіть палець, щоб продовжити"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp"
+                android:textAlignment="center"
+                android:lineSpacingExtra="3dp"
+                app:fontFamily="@font/rubik" />
+        </LinearLayout>
+    </FrameLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

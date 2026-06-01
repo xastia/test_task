@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.xastia.test.data.repository.CameraRepositoryImpl
 import com.xastia.test.databinding.ActivityInstructionBinding
+import com.xastia.test.domain.pulse.FingerDetector
 import com.xastia.test.domain.usecase.StartCameraUseCase
 import com.xastia.test.presentation.ext.applyStatusBarTopPadding
 import kotlinx.coroutines.CoroutineScope
@@ -39,19 +40,14 @@ class InstructionActivity : AppCompatActivity() {
     private lateinit var binding: ActivityInstructionBinding
     private lateinit var cameraRepository: CameraRepositoryImpl
     private lateinit var cameraExecutor: ExecutorService
-
-    // Поріг R-каналу (0-255), вище якого вважаємо палець прикладеним.
-    // ~120 — це консервативна оцінка: реально з torch палець дає R≈180-220.
-    // Без пальця: звичайна сцена має R≈80-130, тож 120 — нормальна межа.
-    private val fingerDetectedRedThreshold = 120.0
+    private val fingerDetector = FingerDetector()
 
     // Скільки перших кадрів пропустити (поки камера встановить експозицію).
     // При ~25-30 fps це ~1 секунда.
     private val warmupFrames = 30
 
-    // Скільки кадрів підряд має триматися висока червоність, щоб упевнитись
-    // що палець справді прикладений, а не випадково потрапив червоний об'єкт.
-    // ~0.5 секунди при 30 fps.
+    // Скільки кадрів підряд має триматися «палець виявлений» щоб не плутати з
+    // випадковим спалахом червоного у кадрі. ~0.5 секунди при 30 fps.
     private val requiredLowFrames = 15
 
     private val hasNavigated = AtomicBoolean(false)
@@ -84,9 +80,9 @@ class InstructionActivity : AppCompatActivity() {
                         return@collect
                     }
 
-                    val red = cameraRepository.analyzeRedChannel(imageProxy)
+                    val rgb = cameraRepository.analyzeRgb(imageProxy)
 
-                    if (red > fingerDetectedRedThreshold) {
+                    if (fingerDetector.isFinger(rgb)) {
                         consecutiveLowFrames++
                         if (consecutiveLowFrames >= requiredLowFrames &&
                             hasNavigated.compareAndSet(false, true)

@@ -8,6 +8,7 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
+import com.xastia.test.domain.pulse.RgbChannels
 import com.xastia.test.domain.repository.CameraRepository
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -141,6 +142,72 @@ class CameraRepositoryImpl(
             }
         }
         return if (count > 0) sumR / count else 0.0
+    }
+
+    /**
+     * Усереднює всі три канали RGB у центральній ROI через повну BT.601 конверсію:
+     *   R = Y + 1.402 × (V − 128)
+     *   G = Y − 0.344 × (U − 128) − 0.714 × (V − 128)
+     *   B = Y + 1.772 × (U − 128)
+     *
+     * Витратніше за лише R (читаємо ще U-площину), але дає змогу детектувати
+     * палець не лише по абсолютному R, а й по його співвідношенню з G і B —
+     * це специфічна сигнатура пропускання гемоглобіну.
+     */
+    override fun analyzeRgb(image: ImageProxy): RgbChannels {
+        val yPlane = image.planes[0]
+        val uPlane = image.planes[1]
+        val vPlane = image.planes[2]
+        val yBuffer = yPlane.buffer
+        val uBuffer = uPlane.buffer
+        val vBuffer = vPlane.buffer
+
+        val yRowStride = yPlane.rowStride
+        val uRowStride = uPlane.rowStride
+        val uPixelStride = uPlane.pixelStride
+        val vRowStride = vPlane.rowStride
+        val vPixelStride = vPlane.pixelStride
+
+        val width = image.width
+        val height = image.height
+        val left = width / 4
+        val top = height / 4
+        val right = left + width / 2
+        val bottom = top + height / 2
+
+        var sumR = 0.0
+        var sumG = 0.0
+        var sumB = 0.0
+        var count = 0
+
+        for (row in top until bottom step 2) {
+            for (col in left until right step 2) {
+                val yIdx = row * yRowStride + col
+                val uIdx = (row / 2) * uRowStride + (col / 2) * uPixelStride
+                val vIdx = (row / 2) * vRowStride + (col / 2) * vPixelStride
+                if (yIdx < 0 || yIdx >= yBuffer.limit()) continue
+                if (uIdx < 0 || uIdx >= uBuffer.limit()) continue
+                if (vIdx < 0 || vIdx >= vBuffer.limit()) continue
+
+                val y = (yBuffer.get(yIdx).toInt() and 0xFF).toDouble()
+                val u = (uBuffer.get(uIdx).toInt() and 0xFF).toDouble()
+                val v = (vBuffer.get(vIdx).toInt() and 0xFF).toDouble()
+
+                val r = (y + 1.402 * (v - 128.0)).coerceIn(0.0, 255.0)
+                val g = (y - 0.344 * (u - 128.0) - 0.714 * (v - 128.0)).coerceIn(0.0, 255.0)
+                val b = (y + 1.772 * (u - 128.0)).coerceIn(0.0, 255.0)
+
+                sumR += r
+                sumG += g
+                sumB += b
+                count++
+            }
+        }
+        return if (count > 0) {
+            RgbChannels(sumR / count, sumG / count, sumB / count)
+        } else {
+            RgbChannels(0.0, 0.0, 0.0)
+        }
     }
 
     override fun enableTorch(enable: Boolean) {
