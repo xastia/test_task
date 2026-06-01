@@ -46,8 +46,23 @@ class PpgProcessor {
         val durationSec = (lastTs - firstTs) / 1000.0
         if (durationSec < MIN_DURATION_SEC) return 0
 
-        // Оцінка частоти дискретизації (фактичної — CameraX зазвичай дає ~25-30 fps)
-        val fs = samples.size / durationSec
+        // Оцінка частоти дискретизації через МЕДІАНУ міжсемплових інтервалів.
+        //
+        // Чому медіана, а не samples.size / durationSec:
+        //   Якщо користувач прибирав палець у середині (PpgProcessor отримує
+        //   семпли лише коли FingerDetector підтверджує палець), у потоці
+        //   будуть "вирвані" частини. Прості samples.size / durationSec
+        //   занижує fs, що зсуває параметри bandpass-фільтра і min peak distance —
+        //   у результаті алгоритм рахує "зайві" піки і завищує BPM.
+        //
+        //   Медіана dt між сусідніми семплами стійка до пауз (вони — outlier-и).
+        val dts = samples.zipWithNext { a, b -> (b.timestampMs - a.timestampMs).toDouble() }
+        // Фільтруємо лише "нормальні" інтервали (< 200мс = камера не паузила)
+        val normalDts = dts.filter { it in 10.0..200.0 }
+        if (normalDts.size < 10) return 0
+        val medianDtMs = median(normalDts)
+        if (medianDtMs <= 0.0) return 0
+        val fs = 1000.0 / medianDtMs
 
         val raw = samples.map { it.redValue }
 
