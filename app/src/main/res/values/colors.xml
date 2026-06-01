@@ -26,10 +26,14 @@
     <color name="lilac_light">#EFE6F0</color>
 
     <!-- Surfaces -->
-    <color name="cream">#FBF7F2</color>
-    <color name="cream_secondary">#F0E6DC</color>
+    <!-- Cream — основний фон. Поглиблено з #FBF7F2 на #F4EDE5 —
+         тепер чітко молочний, контрастує з білими картками. -->
+    <color name="cream">#F4EDE5</color>
+    <!-- Cream secondary — невеликі кружки під іконками (історія, закрити).
+         На цьому фоні має бути трохи темніше за основний. -->
+    <color name="cream_secondary">#E8DCCB</color>
     <color name="surface_white">#FFFFFF</color>
-    <color name="divider_warm">#E5DDD3</color>
+    <color name="divider_warm">#DBCFC0</color>
 
     <!-- Text -->
     <color name="text_primary">#3A2E2A</color>
